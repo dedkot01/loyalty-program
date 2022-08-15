@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Программа лояльность{% endblock %}
+
+{% block content %}
+    <p>Наши пользователи</p>
+    <ul>
+        {% for user in users %}
+            <li>{{ user.name }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
