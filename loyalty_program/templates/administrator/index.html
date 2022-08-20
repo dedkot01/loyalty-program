@@ -3,5 +3,32 @@
 {% block title %}Панель администратора{% endblock %}
 
 {% block content %}
-    Панель администратора
+<div class="d-flex align-items-center justify-content-center">
+    <div class="p-2">
+        <div class="card" style="width: 18rem;">
+            <img src="{{ url_for('static', filename='img/loyalty_program.jpg') }}" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">Программа лояльность</h5>
+                <p class="card-text">Каждое 10-ое посещение для гостя бесплатное.</p>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="btn">
+                    <a href="{{ url_for('loyalty_program_tag_a_member') }}" class="a_without_decor">
+                        Отметить гостя
+                    </a>
+                </li>
+                <li class="btn">
+                    <a href="{{ url_for('loyalty_program_new_member') }}" class="a_without_decor">
+                        Новый участник
+                    </a>
+                </li>
+                <li class="btn">
+                    <a href="{{ url_for('loyalty_program_members') }}" class="a_without_decor">
+                        Список участников
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
 {% endblock %}

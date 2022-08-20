@@ -2,7 +2,7 @@ from database import db_session, init_db
 
 from flask import Flask, render_template, request
 
-from models import LoyaltyProgram, User
+from models import LoyaltyProgram, Member
 
 app = Flask(__name__)
 
@@ -22,32 +22,52 @@ def administrator():
     return render_template('administrator/index.html')
 
 
-@app.route('/administrator/loyalty_program')
-def loyalty_program():
-    users: list = db_session.query(User).all()
+@app.route('/administrator/loyalty_program/members')
+def loyalty_program_members():
+    members: list = db_session.query(Member).all()
+    members = sorted(members, key=lambda member: member.loyalty_program.count, reverse=True)
 
-    return render_template('administrator/loyalty_program.html', users=users)
+    return render_template('administrator/loyalty_program/members.html', members=members)
 
 
-@app.route('/administrator/loyalty_program', methods=['POST'])
-def loyalty_program_post():
-    last_name = request.form.get('last_name')
-    first_name = request.form.get('first_name')
-    phone = request.form.get('phone')
+@app.route('/administrator/loyalty_program/tag_a_member')
+def loyalty_program_tag_a_member():
+    members: list = db_session.query(Member).all()
 
-    u = User.query.filter(User.last_name == last_name,
-                          User.first_name == first_name,
-                          User.phone == phone,).first()
+    return render_template('administrator/loyalty_program/tag_a_member.html', members=members)
 
-    if u is None:
-        u = User(last_name, first_name, phone)
-        u.loyalty_program = LoyaltyProgram()
-    else:
-        u.loyalty_program.count += 1
-    db_session.add(u)
+
+@app.route('/administrator/loyalty_program/tag_a_member', methods=['POST'])
+def loyalty_program_tag_a_member_post():
+    member_id = request.form.get('member_info')
+
+    member = Member.query.filter(Member.id == member_id).first()
+    member.loyalty_program.count += 1
+
+    db_session.add(member)
     db_session.commit()
 
-    return str(u.loyalty_program.count)
+    return render_template('administrator/loyalty_program/member_info.html', member=member)
+
+
+@app.route('/administrator/loyalty_program/new_member')
+def loyalty_program_new_member():
+    return render_template('administrator/loyalty_program/new_member.html')
+
+
+@app.route('/administrator/loyalty_program/new_member', methods=['POST'])
+def loyalty_program_new_member_post():
+    member = Member(
+        request.form.get('last_name'),
+        request.form.get('first_name'),
+        request.form.get('phone'),
+    )
+    member.loyalty_program = LoyaltyProgram()
+
+    db_session.add(member)
+    db_session.commit()
+
+    return render_template('administrator/loyalty_program/member_info.html', member=member)
 
 
 def main(

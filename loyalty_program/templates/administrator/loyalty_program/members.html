@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Программа лояльности{% endblock %}
+
+{% block head %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function(){
+      $("#member_filter_input").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#members_list tr").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+      });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between">
+    <div class="p-2">
+        <h5 class="text-center">Программа лояльности - список участников</h5>
+    </div>
+    <div class="p-2">
+        <a href="{{ url_for('administrator') }}" class="btn btn-warning align-item-right">
+            Панель администратора
+        </a>
+    </div>
+</div>
+<div class="form-floating mb-3">
+    <input type="text" class="form-control" id="member_filter_input" placeholder="Искать...">
+    <label for="member_filter_input">Искать</label>
+</div>
+<div class="mb-3">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Фамилия</th>
+                <th scope="col">Имя</th>
+                <th scope="col">Номер телефона</th>
+                <th scope="col">Посещений</th>
+            </tr>
+        </thead>
+        <tbody id="members_list">
+            {% for member in members %}
+                <tr>
+                    <td>{{ member.last_name }}</td>
+                    <td>{{ member.first_name }}</td>
+                    <td>{{ member.phone }}</td>
+                    <td>{{ member.loyalty_program.count }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
