@@ -12,21 +12,21 @@
                 <p class="card-text">Каждое 10-ое посещение для гостя бесплатное.</p>
             </div>
             <ul class="list-group list-group-flush">
-                <li class="btn">
-                    <a href="{{ url_for('loyalty_program_tag_a_member') }}" class="a_without_decor">
+                <a href="{{ url_for('loyalty_program_tag_a_member') }}" class="a_without_decor">
+                    <li class="list-group-item btn">
                         Отметить гостя
-                    </a>
-                </li>
-                <li class="btn">
-                    <a href="{{ url_for('loyalty_program_new_member') }}" class="a_without_decor">
+                    </li>
+                </a>
+                <a href="{{ url_for('loyalty_program_new_member') }}" class="a_without_decor">
+                    <li class="list-group-item btn">
                         Новый участник
-                    </a>
-                </li>
-                <li class="btn">
-                    <a href="{{ url_for('loyalty_program_members') }}" class="a_without_decor">
+                    </li>
+                </a>
+                <a href="{{ url_for('loyalty_program_members') }}" class="a_without_decor">
+                    <li class="list-group-item btn">
                         Список участников
-                    </a>
-                </li>
+                    </li>
+                </a>
             </ul>
         </div>
     </div>
