@@ -1,4 +1,17 @@
-<nav>
-    <a href="/">Home</a>
-    <a href="#">About</a>
-</nav>
+{% block menu %}
+<header>
+    <div class="d-flex align-items-center container">
+        <div class="p-2">
+            <a href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', filename='img/logo/krylia_logo.jpg') }}" alt="logo" class="rounded" width="50px">
+            </a>
+        </div>
+        <div class="p-2">
+            <h1 class="display-6 m-0">
+                Антикафе "Крылья"
+            </h1>
+        </div>
+    </div>
+</header>
+<div class="end_line"></div>
+{% endblock %}
