@@ -61,6 +61,7 @@ def loyalty_program_new_member_post():
         request.form.get('last_name'),
         request.form.get('first_name'),
         request.form.get('phone'),
+        request.form.get('comment'),
     )
     member.loyalty_program = LoyaltyProgram()
 
