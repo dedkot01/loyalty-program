@@ -11,13 +11,15 @@ class Member(Base):
     last_name = Column(String(50), unique=False)
     first_name = Column(String(50), unique=False)
     phone = Column(String(120), unique=False)
+    comment = Column(String(255), unique=False)
 
     loyalty_program = relationship('LoyaltyProgram', back_populates='members', uselist=False)
 
-    def __init__(self, last_name: str, first_name: str, phone: str) -> None:
+    def __init__(self, last_name: str, first_name: str, phone: str, comment: str) -> None:
         self.last_name = last_name
         self.first_name = first_name
         self.phone = phone
+        self.comment = comment
 
     def __repr__(self):
         return f'<Member {self.last_name!r} {self.first_name!r} - {self.phone!r}>'
