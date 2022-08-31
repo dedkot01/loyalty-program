@@ -108,9 +108,61 @@ def loyalty_program_members():
         members: list = db_session.query(Member).all()
         members = sorted(members, key=lambda member: member.loyalty_program.count, reverse=True)
 
-        return render_template('administrator/loyalty_program/members.html', members=members)
+        return render_template('administrator/loyalty_program/members.html', members=members, rules_access=rules_access)
     else:
         return redirect('/')
+
+
+@app.route('/administrator/loyalty_program/members/<int:member_id>')
+@login_required
+def loyalty_program_member(member_id: int):
+    member = Member.query.filter(Member.id == member_id).first()
+
+    return render_template('administrator/loyalty_program/member_info.html', member=member)
+
+
+@app.route('/administrator/loyalty_program/members/<int:member_id>/delete')
+@login_required
+def loyalty_program_member_delete(member_id: int):
+    if current_user.is_have_access(rules_access.administrator_loyalty_program_member_extends_funcs.access_groups,
+                                   how=rules_access.administrator_loyalty_program_member_extends_funcs.how):
+        member = Member.query.filter(Member.id == member_id).first()
+        db_session.delete(member)
+        db_session.commit()
+
+    return redirect('/administrator/loyalty_program/members')
+
+
+@app.route('/administrator/loyalty_program/members/<int:member_id>/edit')
+@login_required
+def loyalty_program_member_edit(member_id: int):
+    if current_user.is_have_access(rules_access.administrator_loyalty_program_member_extends_funcs.access_groups,
+                                   how=rules_access.administrator_loyalty_program_member_extends_funcs.how):
+        member = Member.query.filter(Member.id == member_id).first()
+        return render_template('administrator/loyalty_program/member_edit.html', member=member)
+    else:
+        return redirect('/administrator/loyalty_program/members')
+
+
+@app.route('/administrator/loyalty_program/members/<int:member_id>/edit', methods=['POST'])
+@login_required
+def loyalty_program_member_edit_post(member_id: int):
+    if current_user.is_have_access(rules_access.administrator_loyalty_program_member_extends_funcs.access_groups,
+                                   how=rules_access.administrator_loyalty_program_member_extends_funcs.how):
+        member: Member = Member.query.filter(Member.id == member_id).first()
+
+        member.last_name = request.form.get('last_name')
+        member.first_name = request.form.get('first_name')
+        member.phone = request.form.get('phone')
+        member.comment = request.form.get('comment')
+        member.loyalty_program.count = request.form.get('count')
+
+        db_session.add(member)
+        db_session.commit()
+
+        return redirect(f'/administrator/loyalty_program/members/{member.id}')
+    else:
+        return redirect('/administrator/loyalty_program/members')
 
 
 @app.route('/administrator/loyalty_program/tag_a_member')

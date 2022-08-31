@@ -16,3 +16,12 @@
 .anim_scale:hover {
     transform: scale(1.1);
 }
+
+.row {
+    display: flex;
+    align-items: center;
+}
+  
+.column {
+    flex: 33.33%;
+}

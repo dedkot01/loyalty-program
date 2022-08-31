@@ -12,3 +12,4 @@ class RuleAccess:
 
 
 administrator_page = RuleAccess(['administrator'])
+administrator_loyalty_program_member_extends_funcs = RuleAccess(['super_administrator'])

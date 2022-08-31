@@ -41,7 +41,10 @@ class Member(Base):
     phone = Column(String(120))
     comment = Column(String(255))
 
-    loyalty_program = relationship('LoyaltyProgram', back_populates='members', uselist=False)
+    loyalty_program = relationship(
+        'LoyaltyProgram',
+        cascade="all, delete-orphan", single_parent=True,
+        back_populates='members', uselist=False)
 
     def __init__(self, last_name: str, first_name: str, phone: str, comment: str) -> None:
         self.last_name = last_name
