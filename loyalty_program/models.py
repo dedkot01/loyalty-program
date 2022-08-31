@@ -1,17 +1,32 @@
 from database import Base
 
-from sqlalchemy import Column, ForeignKey, Integer, String
+from flask_login import UserMixin
+
+from sqlalchemy import ARRAY, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
+
+
+class User(Base, UserMixin):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True)
+    login = Column(String(25), unique=True)
+    password = Column(String(255))
+    access_groups = Column(ARRAY(String))
+
+    def __init__(self, login: str, password: str):
+        self.login = login
+        self.password = password
 
 
 class Member(Base):
     __tablename__ = 'members'
 
     id = Column(Integer, primary_key=True)
-    last_name = Column(String(50), unique=False)
-    first_name = Column(String(50), unique=False)
-    phone = Column(String(120), unique=False)
-    comment = Column(String(255), unique=False)
+    last_name = Column(String(50))
+    first_name = Column(String(50))
+    phone = Column(String(120))
+    comment = Column(String(255))
 
     loyalty_program = relationship('LoyaltyProgram', back_populates='members', uselist=False)
 
@@ -29,7 +44,7 @@ class LoyaltyProgram(Base):
     __tablename__ = 'loyalty_program'
 
     id = Column(Integer, ForeignKey('members.id'), primary_key=True)
-    count = Column(Integer, unique=False)
+    count = Column(Integer)
 
     members = relationship('Member', back_populates='loyalty_program')
 
