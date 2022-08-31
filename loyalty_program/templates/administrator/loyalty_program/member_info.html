@@ -14,7 +14,8 @@
     </div>
 </div>
 <div>
-    <p>{{ member.last_name }} {{ member.first_name }} ({{ member.phone }}) - {{ member.loyalty_program.count }} посещение</p>
+    <p>{{ member.last_name }} {{ member.first_name }} ({{ member.phone }})</p>
+    <p>Посещений - {{ member.loyalty_program.count }}</p>
     <p>Комментарий:</p>
     <p>{{ member.comment }}</p>
 </div>

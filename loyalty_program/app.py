@@ -37,14 +37,12 @@ def login_post():
     user = User.query.filter(User.login == login).first()
 
     if user is None:
-        print(f'Пользователь "{login}" не найден')
         return redirect('/login')
     else:
         if check_password_hash(user.password, password):
             login_user(user)
             return redirect(request.args.get('next') or '/')
         else:
-            print('Неверный пароль')
             return redirect('/login')
 
 
@@ -88,6 +86,95 @@ def shutdown_session(exception=None):
 @app.route('/')
 def index():
     return render_template('index.html', rules_access=rules_access)
+
+
+@app.route('/admin_system')
+@login_required
+def admin_system():
+    if current_user.is_have_access(rules_access.admin_system_page.access_groups,
+                                   how=rules_access.admin_system_page.how):
+        return render_template('admin_system/index.html')
+    else:
+        return redirect('/')
+
+
+@app.route('/admin_system/users')
+@login_required
+def admin_system_users():
+    if current_user.is_have_access(rules_access.admin_system_page.access_groups,
+                                   how=rules_access.admin_system_page.how):
+        users = User.query.all()
+
+        return render_template('admin_system/users/users.html', users=users)
+    else:
+        return redirect('/admin_system')
+
+
+@app.route('/admin_system/users/<int:user_id>')
+@login_required
+def admin_system_user_info(user_id: int):
+    if current_user.is_have_access(rules_access.admin_system_page.access_groups,
+                                   how=rules_access.admin_system_page.how):
+        user = User.query.filter(User.id == user_id).first()
+
+        return render_template('admin_system/users/user_info.html', user=user)
+    else:
+        return redirect('/admin_system')
+
+
+@app.route('/admin_system/users/<int:user_id>/edit')
+@login_required
+def admin_system_user_edit(user_id: int):
+    if current_user.is_have_access(rules_access.admin_system_page.access_groups,
+                                   how=rules_access.admin_system_page.how):
+        user = User.query.filter(User.id == user_id).first()
+
+        return render_template('admin_system/users/user_edit.html', user=user, access_groups=rules_access.access_groups)
+    else:
+        return redirect('/admin_system')
+
+
+@app.route('/admin_system/users/<int:user_id>/edit', methods=['POST'])
+@login_required
+def admin_system_user_edit_post(user_id: int):
+    if current_user.is_have_access(rules_access.admin_system_page.access_groups,
+                                   how=rules_access.admin_system_page.how):
+        user: User = User.query.filter(User.id == user_id).first()
+
+        user.login = request.form.get('login')
+        if request.form.get('is_new_password'):
+            new_password = generate_password_hash(request.form.get('password'))
+            user.password = new_password
+
+        for access_group in rules_access.access_groups.keys():
+            if request.form.get(access_group):
+                if access_group not in user.access_groups:
+                    user.access_groups.append(access_group)
+            else:
+                if access_group in user.access_groups:
+                    user.access_groups.remove(access_group)
+
+        db_session.add(user)
+        db_session.commit()
+
+        return redirect('/admin_system/users')
+    else:
+        return redirect('/admin_system')
+
+
+@app.route('/admin_system/users/<int:user_id>/delete')
+@login_required
+def admin_system_user_delete(user_id: int):
+    if current_user.is_have_access(rules_access.admin_system_page.access_groups,
+                                   how=rules_access.admin_system_page.how):
+        user = User.query.filter(User.id == user_id).first()
+
+        db_session.delete(user)
+        db_session.commit()
+
+        return redirect('/admin_system/users')
+    else:
+        return redirect('/admin_system')
 
 
 @app.route('/administrator')

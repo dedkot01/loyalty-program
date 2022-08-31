@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Пользователи{% endblock %}
+
+{% block head %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function(){
+      $("#member_filter_input").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#members_list tr").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+      });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between">
+    <div class="p-2">
+        <h5 class="text-center">Пользователи - список</h5>
+    </div>
+    <div class="p-2">
+        <a href="{{ url_for('admin_system') }}" class="btn btn-warning align-item-right">
+            Панель системы
+        </a>
+    </div>
+</div>
+<div class="form-floating mb-3">
+    <input type="text" class="form-control" id="user_filter_input" placeholder="Искать...">
+    <label for="user_filter_input">Искать</label>
+</div>
+<div class="mb-3">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Логин</th>
+                <th scope="col">Уровни доступа</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody id="users_list">
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.login }}</td>
+                    <td>{{ ', '.join(user.access_groups) }}</td>
+                    <td>
+                        <div class="row">
+                            <div class="column anim_scale">
+                                <a href="{{ url_for('admin_system_user_info', user_id=user.id) }}">
+                                    <img src="{{ url_for('static', filename='img/icons/circle-info-solid.svg') }}" alt="Инфо">
+                                </a>
+                            </div>
+                            <div class="column anim_scale">
+                                <a href="{{ url_for('admin_system_user_edit', user_id=user.id) }}">
+                                    <img src="{{ url_for('static', filename='img/icons/square-pen-solid.svg') }}" alt="Изменить">
+                                </a>
+                            </div>
+                            <div class="column anim_scale">
+                                <a href="{{ url_for('admin_system_user_delete', user_id=user.id) }}">
+                                    <img src="{{ url_for('static', filename='img/icons/trash-can-solid.svg') }}" alt="Удалить">
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
