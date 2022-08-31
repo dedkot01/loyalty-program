@@ -19,5 +19,5 @@ access_groups = {
 
 admin_system_page = RuleAccess(['admin'])
 
-administrator_page = RuleAccess(['administrator'])
+administrator_page = RuleAccess(['administrator', 'super_administrator'])
 administrator_loyalty_program_member_extends_funcs = RuleAccess(['super_administrator'])

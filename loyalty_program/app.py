@@ -146,13 +146,11 @@ def admin_system_user_edit_post(user_id: int):
             new_password = generate_password_hash(request.form.get('password'))
             user.password = new_password
 
+        new_access_groups = []
         for access_group in rules_access.access_groups.keys():
             if request.form.get(access_group):
-                if access_group not in user.access_groups:
-                    user.access_groups.append(access_group)
-            else:
-                if access_group in user.access_groups:
-                    user.access_groups.remove(access_group)
+                new_access_groups.append(access_group)
+        user.access_groups = new_access_groups
 
         db_session.add(user)
         db_session.commit()
