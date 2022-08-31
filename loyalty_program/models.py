@@ -14,9 +14,22 @@ class User(Base, UserMixin):
     password = Column(String(255))
     access_groups = Column(ARRAY(String))
 
-    def __init__(self, login: str, password: str):
+    def __init__(self, login: str, password: str, access_groups: list = None):
         self.login = login
         self.password = password
+        self.access_groups = [] if access_groups is None else access_groups
+
+    def is_have_access(self, access_groups: list, how='any'):
+        if 'admin' in self.access_groups:
+            return True
+
+        compare_result = [True if access_group in access_groups else False for access_group in self.access_groups]
+        if how == 'any':
+            return any(compare_result)
+        elif how == 'all':
+            return all(compare_result)
+        else:
+            raise Exception(f'Method "{how}" not implemented. Expected: "any" or "all".')
 
 
 class Member(Base):
