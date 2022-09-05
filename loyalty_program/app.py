@@ -24,6 +24,24 @@ def load_user(user_id):
     return User.query.filter(User.id == user_id).first()
 
 
+@app.route('/registration')
+def registration():
+    return render_template('registration.html')
+
+
+@app.route('/registration', methods=['POST'])
+def registration_post():
+    login = request.form.get('login')
+    password = request.form.get('password')
+    hash_password = generate_password_hash(password)
+
+    user = User(login, hash_password)
+    db_session.add(user)
+    db_session.commit()
+
+    return redirect('/')
+
+
 @app.route('/login')
 def login():
     return render_template('login.html')
@@ -46,41 +64,16 @@ def login_post():
             return redirect('/login')
 
 
-@app.route('/profile')
-@login_required
-def profile():
-    return render_template('profile.html')
-
-
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect('/')
 
 
-@app.route('/registration')
-def registration():
-    return render_template('registration.html')
-
-
-@app.route('/registration', methods=['POST'])
-def registration_post():
-    login = request.form.get('login')
-    password = request.form.get('password')
-    hash_password = generate_password_hash(password)
-
-    user = User(login, hash_password)
-    db_session.add(user)
-    db_session.commit()
-
-    print(f'Пользователь "{login}" зарегистрирован')
-
-    return redirect('/')
-
-
-@app.teardown_appcontext
-def shutdown_session(exception=None):
-    db_session.remove()
+@app.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html')
 
 
 @app.route('/')
@@ -206,16 +199,35 @@ def loyalty_program_member(member_id: int):
     return render_template('administrator/loyalty_program/member_info.html', member=member)
 
 
-@app.route('/administrator/loyalty_program/members/<int:member_id>/delete')
+@app.route('/administrator/loyalty_program/new_member')
 @login_required
-def loyalty_program_member_delete(member_id: int):
-    if current_user.is_have_access(rules_access.administrator_loyalty_program_member_extends_funcs.access_groups,
-                                   how=rules_access.administrator_loyalty_program_member_extends_funcs.how):
-        member = Member.query.filter(Member.id == member_id).first()
-        db_session.delete(member)
+def loyalty_program_new_member():
+    if current_user.is_have_access(rules_access.administrator_page.access_groups,
+                                   how=rules_access.administrator_page.how):
+        return render_template('administrator/loyalty_program/new_member.html')
+    else:
+        return redirect('/')
+
+
+@app.route('/administrator/loyalty_program/new_member', methods=['POST'])
+@login_required
+def loyalty_program_new_member_post():
+    if current_user.is_have_access(rules_access.administrator_page.access_groups,
+                                   how=rules_access.administrator_page.how):
+        member = Member(
+            request.form.get('last_name'),
+            request.form.get('first_name'),
+            request.form.get('phone'),
+            request.form.get('comment'),
+        )
+        member.loyalty_program = LoyaltyProgram()
+
+        db_session.add(member)
         db_session.commit()
 
-    return redirect('/administrator/loyalty_program/members')
+        return render_template('administrator/loyalty_program/member_info.html', member=member)
+    else:
+        return redirect('/')
 
 
 @app.route('/administrator/loyalty_program/members/<int:member_id>/edit')
@@ -250,6 +262,18 @@ def loyalty_program_member_edit_post(member_id: int):
         return redirect('/administrator/loyalty_program/members')
 
 
+@app.route('/administrator/loyalty_program/members/<int:member_id>/delete')
+@login_required
+def loyalty_program_member_delete(member_id: int):
+    if current_user.is_have_access(rules_access.administrator_loyalty_program_member_extends_funcs.access_groups,
+                                   how=rules_access.administrator_loyalty_program_member_extends_funcs.how):
+        member = Member.query.filter(Member.id == member_id).first()
+        db_session.delete(member)
+        db_session.commit()
+
+    return redirect('/administrator/loyalty_program/members')
+
+
 @app.route('/administrator/loyalty_program/tag_a_member')
 @login_required
 def loyalty_program_tag_a_member():
@@ -280,37 +304,6 @@ def loyalty_program_tag_a_member_post():
         return redirect('/')
 
 
-@app.route('/administrator/loyalty_program/new_member')
-@login_required
-def loyalty_program_new_member():
-    if current_user.is_have_access(rules_access.administrator_page.access_groups,
-                                   how=rules_access.administrator_page.how):
-        return render_template('administrator/loyalty_program/new_member.html')
-    else:
-        return redirect('/')
-
-
-@app.route('/administrator/loyalty_program/new_member', methods=['POST'])
-@login_required
-def loyalty_program_new_member_post():
-    if current_user.is_have_access(rules_access.administrator_page.access_groups,
-                                   how=rules_access.administrator_page.how):
-        member = Member(
-            request.form.get('last_name'),
-            request.form.get('first_name'),
-            request.form.get('phone'),
-            request.form.get('comment'),
-        )
-        member.loyalty_program = LoyaltyProgram()
-
-        db_session.add(member)
-        db_session.commit()
-
-        return render_template('administrator/loyalty_program/member_info.html', member=member)
-    else:
-        return redirect('/')
-
-
 def create_admin_user():
     if User.query.filter(User.login == config.admin_login).first() is None:
         admin = User(
@@ -320,6 +313,11 @@ def create_admin_user():
         )
         db_session.add(admin)
         db_session.commit()
+
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db_session.remove()
 
 
 def main(
