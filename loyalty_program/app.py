@@ -321,6 +321,7 @@ def shutdown_session(exception=None):
 
 
 def main(
+    host: str,
     port: int,
     debug: bool,
 ):
@@ -328,6 +329,7 @@ def main(
     create_admin_user()
 
     app.run(
+        host=host,
         port=port,
         debug=debug,
     )
@@ -338,6 +340,7 @@ if __name__ == "__main__":
 
     args = get_args()
     main(
+        host=args.host,
         port=args.port,
         debug=args.debug,
     )

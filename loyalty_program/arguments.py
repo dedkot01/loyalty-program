@@ -7,6 +7,11 @@ def get_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        '--host', type=str,
+        help='адрес хоста, по которому будет доступен сервер (127.0.0.1 - локальная сеть, 0.0.0.0 - глобальная сеть)',
+    )
+
+    parser.add_argument(
         '--port', type=int,
         help='порт, по которому будет доступен сервер',
     )
