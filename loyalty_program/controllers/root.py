@@ -25,8 +25,13 @@ def registration_post():
     hash_password = generate_password_hash(password)
 
     user = User(login, hash_password)
-    db_session.add(user)
-    db_session.commit()
+
+    try:
+        db_session.add(user)
+        db_session.commit()
+    except Exception as e:
+        # TODO alert in page
+        print(e)
 
     return redirect('/')
 

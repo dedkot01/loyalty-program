@@ -18,9 +18,10 @@ users = Blueprint('users', __name__)
 def index():
     if current_user.is_have_access(rules_access.admin_system_page.access_groups,
                                    how=rules_access.admin_system_page.how):
-        users = User.query.all()
+        admin = User.query.filter(User.login == 'admin').first()
+        users = User.query.filter(User.login != 'admin').all()
 
-        return render_template('admin_system/users/users.html', users=users)
+        return render_template('admin_system/users/users.html', admin=admin, users=users)
     else:
         return redirect('/admin_system')
 
@@ -82,8 +83,10 @@ def delete(user_id: int):
                                    how=rules_access.admin_system_page.how):
         user = User.query.filter(User.id == user_id).first()
 
-        db_session.delete(user)
-        db_session.commit()
+        # TODO alert in page
+        if user.login != 'admin':
+            db_session.delete(user)
+            db_session.commit()
 
         return redirect('/admin_system/users')
     else:

@@ -41,6 +41,29 @@
             </tr>
         </thead>
         <tbody id="users_list">
+            {% if admin %}
+                <tr>
+                    <td>{{ admin.login }}</td>
+                    <td>{{ ', '.join(admin.access_groups) }}</td>
+                    <td>
+                        <div class="row">
+                            <div class="column anim_scale">
+                                <a href="{{ url_for('users.info', user_id=admin.id) }}">
+                                    <img src="{{ url_for('static', filename='img/icons/circle-info-solid.svg') }}" alt="Инфо">
+                                </a>
+                            </div>
+                            <div class="column anim_scale">
+                                <a href="{{ url_for('users.edit', user_id=admin.id) }}">
+                                    <img src="{{ url_for('static', filename='img/icons/square-pen-solid.svg') }}" alt="Изменить">
+                                </a>
+                            </div>
+                            <div class="column">
+                                <img src="{{ url_for('static', filename='img/icons/trash-can-solid.svg') }}" style="opacity:0.5" alt="Удалить">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
             {% for user in users %}
                 <tr>
                     <td>{{ user.login }}</td>
