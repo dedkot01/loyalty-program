@@ -68,8 +68,12 @@ def edit_post(user_id: int):
                 new_access_groups.append(access_group)
         user.access_groups = new_access_groups
 
-        db_session.add(user)
-        db_session.commit()
+        try:
+            db_session.add(user)
+            db_session.commit()
+        except Exception as e:
+            # TODO alarm in page
+            print(e)
 
         return redirect('/admin_system/users')
     else:
