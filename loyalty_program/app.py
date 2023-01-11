@@ -14,58 +14,48 @@ from models import User
 
 from werkzeug.security import generate_password_hash
 
-app = Flask(__name__)
-app.secret_key = config.secret_key
 
-app.register_blueprint(root)
-app.register_blueprint(users, url_prefix='/admin_system/users')
-app.register_blueprint(loyalty_program, url_prefix='/administrator/loyalty_program')
+def create_app():
+    app = Flask(__name__)
+    app.secret_key = config.secret_key
 
-login_manager = LoginManager(app)
-login_manager.login_view = 'root.login'
+    app.register_blueprint(root)
+    app.register_blueprint(users, url_prefix='/admin_system/users')
+    app.register_blueprint(loyalty_program, url_prefix='/administrator/loyalty_program')
 
+    login_manager = LoginManager(app)
+    login_manager.login_view = 'root.login'
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.filter(User.id == user_id).first()
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.filter(User.id == user_id).first()
 
+    def create_admin_user():
+        if User.query.filter(User.login == config.admin_login).first() is None:
+            admin = User(
+                login=config.admin_login,
+                password=generate_password_hash(config.admin_password),
+                access_groups=['admin'],
+            )
+            db_session.add(admin)
+            db_session.commit()
 
-def create_admin_user():
-    if User.query.filter(User.login == config.admin_login).first() is None:
-        admin = User(
-            login=config.admin_login,
-            password=generate_password_hash(config.admin_password),
-            access_groups=['admin'],
-        )
-        db_session.add(admin)
-        db_session.commit()
+    @app.teardown_appcontext
+    def shutdown_session(exception=None):
+        db_session.remove()
 
-
-@app.teardown_appcontext
-def shutdown_session(exception=None):
-    db_session.remove()
-
-
-def main(
-    host: str,
-    port: int,
-    debug: bool,
-):
     init_db()
     create_admin_user()
 
-    app.run(
-        host=host,
-        port=port,
-        debug=debug,
-    )
+    return app
 
 
 if __name__ == "__main__":
     from arguments import get_args
 
     args = get_args()
-    main(
+    app = create_app()
+    app.run(
         host=args.host,
         port=args.port,
         debug=args.debug,
