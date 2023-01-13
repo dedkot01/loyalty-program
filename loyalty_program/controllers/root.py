@@ -1,6 +1,6 @@
 from database import db_session
 
-from flask import Blueprint, redirect, render_template, request
+from flask import Blueprint, flash, redirect, render_template, request
 
 from flask_login import current_user, login_required, login_user, logout_user
 
@@ -30,8 +30,7 @@ def registration_post():
         db_session.add(user)
         db_session.commit()
     except Exception as e:
-        # TODO alert in page
-        print(e)
+        flash(e)
 
     return redirect('/')
 

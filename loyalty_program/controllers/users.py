@@ -1,6 +1,6 @@
 from database import db_session
 
-from flask import Blueprint, redirect, render_template, request
+from flask import Blueprint, flash, redirect, render_template, request
 
 from flask_login import current_user, login_required
 
@@ -72,8 +72,7 @@ def edit_post(user_id: int):
             db_session.add(user)
             db_session.commit()
         except Exception as e:
-            # TODO alarm in page
-            print(e)
+            flash(e)
 
         return redirect('/admin_system/users')
     else:
@@ -87,10 +86,11 @@ def delete(user_id: int):
                                    how=rules_access.admin_system_page.how):
         user = User.query.filter(User.id == user_id).first()
 
-        # TODO alert in page
         if user.login != 'admin':
             db_session.delete(user)
             db_session.commit()
+        else:
+            flash('Нельзя удалить учётку главного администратора')
 
         return redirect('/admin_system/users')
     else:

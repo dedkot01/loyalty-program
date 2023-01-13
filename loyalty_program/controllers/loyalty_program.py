@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from database import db_session
 
-from flask import Blueprint, redirect, render_template, request
+from flask import Blueprint, flash, redirect, render_template, request
 
 from flask_login import current_user, login_required
 
@@ -130,13 +130,14 @@ def tag_a_member_post():
 
         member = Member.query.filter(Member.id == member_id).first()
 
-        # TODO: alert in page
         if datetime.utcnow() > member.loyalty_program.time_mark + timedelta(seconds=20):
             member.loyalty_program.count += 1
             member.loyalty_program.time_mark = datetime.utcnow()
 
             db_session.add(member)
             db_session.commit()
+        else:
+            flash('Гостя уже не так давно отмечали')
 
         return render_template('administrator/loyalty_program/member_info.html', member=member)
     else:
