@@ -1,8 +1,10 @@
+from datetime import datetime
+
 from database import Base
 
 from flask_login import UserMixin
 
-from sqlalchemy import ARRAY, Column, ForeignKey, Integer, String
+from sqlalchemy import ARRAY, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 
@@ -61,11 +63,13 @@ class LoyaltyProgram(Base):
 
     id = Column(Integer, ForeignKey('members.id'), primary_key=True)
     count = Column(Integer)
+    time_mark = Column(DateTime)
 
     members = relationship('Member', back_populates='loyalty_program')
 
-    def __init__(self, count: int = 1) -> None:
+    def __init__(self, count: int = 1, time_mark: datetime = datetime.utcnow()) -> None:
         self.count = count
+        self.time_mark = time_mark
 
     def __repr__(self):
         return f'<LoyaltyProgram {self.count!r}>'

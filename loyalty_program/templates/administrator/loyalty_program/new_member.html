@@ -15,15 +15,15 @@
 </div>
 <form action="" method="post">
     <div class="form-floating mb-3">
-        <input type="text" name="last_name" class="form-control" id="last_name_input" placeholder="Иванов">
+        <input required type="text" name="last_name" class="form-control" id="last_name_input" placeholder="Иванов">
         <label for="last_name_input">Фамилия</label>
     </div>
     <div class="form-floating mb-3">
-        <input type="text" name="first_name" class="form-control" id="first_name_input" placeholder="Иван">
+        <input required type="text" name="first_name" class="form-control" id="first_name_input" placeholder="Иван">
         <label for="first_name_input">Имя</label>
     </div>
     <div class="form-floating mb-3">
-        <input type="text" name="phone" class="form-control" id="phone_input" placeholder="8 (800) 555-35-35">
+        <input required type="tel" name="phone" class="form-control active" id="phone_input" data-mdb-input-mask="+48 999-999-999" placeholder="+48 999-999-999">
         <label for="phone_input">Номер телефона</label>
     </div>
     <div class="form-floating mb-3">
