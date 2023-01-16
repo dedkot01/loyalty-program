@@ -1,0 +1,27 @@
+.end_line {
+    width: 96%;
+    margin: 0% 2% 15px 2%;
+    border-bottom: 1px solid rgb(160, 160, 160);
+}
+
+.a_without_decor {
+    text-decoration: none;
+    color: black !important;
+}
+
+.anim_scale {
+    transition: transform .4s;
+}
+
+.anim_scale:hover {
+    transform: scale(1.1);
+}
+
+.row {
+    display: flex;
+    align-items: center;
+}
+  
+.column {
+    flex: 33.33%;
+}

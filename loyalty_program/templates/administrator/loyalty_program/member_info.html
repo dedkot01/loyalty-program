@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Программа лояльности{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between">
+    <div class="p-2">
+        <h5 class="text-center">Программа лояльности - инфо об участнике</h5>
+    </div>
+    <div class="p-2">
+        <a href="{{ url_for('root.administrator') }}" class="btn btn-warning align-item-right">
+            Панель администратора
+        </a>
+    </div>
+</div>
+<div>
+    <p>{{ member.last_name }} {{ member.first_name }} ({{ member.phone }})</p>
+    <p>Посещений - {{ member.loyalty_program.count }}</p>
+    <p>Комментарий:</p>
+    <p>{{ member.comment }}</p>
+</div>
+{% endblock %}

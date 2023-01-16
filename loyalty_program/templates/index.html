@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center">
+    {% if current_user.is_authenticated and current_user.is_have_access(rules_access.admin_system_page.access_groups, how=rules_access.admin_system_page.how) %}
+    <div class="p-2 anim_scale">
+        <a href="{{ url_for('root.admin_system') }}" class="a_without_decor">
+            <div class="card" style="width: 18rem;">
+                <img src="{{ url_for('static', filename='img/admin_system.jpg') }}" class="card-img-top" alt="">
+                <div class="card-body">
+                  <p class="card-text text-center">Администрирование системы</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endif %}
+    {% if current_user.is_authenticated and current_user.is_have_access(rules_access.administrator_page.access_groups, how=rules_access.administrator_page.how) %}
+    <div class="p-2 anim_scale">
+        <a href="{{ url_for('root.administrator') }}" class="a_without_decor">
+            <div class="card" style="width: 18rem;">
+                <img src="{{ url_for('static', filename='img/admin_panel.jpg') }}" class="card-img-top" alt="">
+                <div class="card-body">
+                  <p class="card-text text-center">Панель администратора</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
